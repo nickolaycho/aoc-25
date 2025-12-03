@@ -2,7 +2,7 @@ from abc import ABC
 from functools import cached_property
 from itertools import chain
 
-class Day1(ABC):
+class Day2(ABC):
     def __init__(self,
                  input_path: str="input.txt"):
         self.input_path: str = input_path
@@ -19,7 +19,7 @@ class Day1(ABC):
 
         return ranges
 
-class Part1(Day1):
+class Part1(Day2):
 
     def digits_in_number(self, number: int) -> int:
         return len(str(number))
