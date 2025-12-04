@@ -1,6 +1,5 @@
-from abc import ABC
-from functools import cached_property
 from enum import Enum
+from collections.abc import Iterator
 
 def get_input(input_path: str) -> list[str]:
     with open(input_path, "r", encoding="utf-8") as f:
@@ -31,10 +30,9 @@ class Grid():
     # Part 1
     def count_accessible_rolls_of_paper(self) -> int:
         num_accessible_rolls_of_paper: int = 0
-        for row in self.cells:
-            for cell in row:
-                if  cell.is_roll_of_paper() and cell.is_accessible_by_forklift():
-                    num_accessible_rolls_of_paper += 1
+        for cell in self.iter_internal_cells():
+            if  cell.is_roll_of_paper() and cell.is_accessible_by_forklift():
+                num_accessible_rolls_of_paper += 1
         return num_accessible_rolls_of_paper
 
     def pad_grid(self) -> list[str]:
@@ -62,26 +60,29 @@ class Grid():
 
     def remove_accessible_rolls_of_paper(self) -> int:
         removed_rolls_of_paper: int = 0
-        for row in self.cells:
-            for cell in row:
-                if cell.is_roll_of_paper() and cell.is_accessible_by_forklift():
-                    self.mark_cell_as_removed(cell)
-                    removed_rolls_of_paper += 1
+        for cell in self.iter_internal_cells():
+            if cell.is_roll_of_paper() and cell.is_accessible_by_forklift():
+                self.mark_cell_as_removed(cell)
+                removed_rolls_of_paper += 1
         return removed_rolls_of_paper
 
     def mark_cell_as_removed(self, cell: "Cell") -> None:
-        cell.set_value("x")
+        cell.set_type(CellType.REMOVED)
 
     def count_total_rolls_of_paper(self) -> int:
         tot_rolls_of_paper: int = 0
-        for row in self.cells:
-            for cell in row:
-                if cell.is_roll_of_paper():
-                    tot_rolls_of_paper += 1
+        for cell in self.iter_internal_cells():
+            if cell.is_roll_of_paper():
+                tot_rolls_of_paper += 1
         return tot_rolls_of_paper
 
     def get_cell(self, row: int, column: int) -> "Cell":
         return self.cells[row][column]
+
+    def iter_internal_cells(self) -> Iterator["Cell"]:
+        for row in range(1, self.rows_in_padded_grid):
+            for column in range(1, self.columns_in_padded_grid):
+                yield self.cells[row][column]
 
 class Cell():
     def __init__(self,
@@ -91,10 +92,11 @@ class Cell():
         self.grid = grid
         self.row = row
         self.column = column
-        self.value: str = self.grid.padded_grid[self.row][self.column]
+        char: str = self.grid.padded_grid[self.row][self.column]
+        self.type = CellType(char)
 
-    def set_value(self, value: str) -> None:
-        self.value = value
+    def set_type(self, new_type: str) -> None:
+        self.type = new_type
 
     def adjacent_cells(self) -> list["Cell"]:
         left = self.grid.get_cell(self.row, self.column - 1)
@@ -108,7 +110,7 @@ class Cell():
         return [left, right, up, down, upright, upleft, downright, downleft]
 
     def is_roll_of_paper(self) -> bool:
-        return self.value == "@"
+        return self.type == CellType.ROLL
 
     def rolls_of_paper_in_adjacent_cells(self) -> int:
         num_rolls = 0
