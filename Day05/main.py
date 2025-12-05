@@ -15,8 +15,11 @@ def main():
     print("Part 1 result:", result_part_1)
 
     part2 = FreshItems(input_ranges=ranges)
+    start = time.perf_counter()
     result_part_2 = part2.tot_fresh_items()
+    end=time.perf_counter()
     print("Part 2 result:", result_part_2)
+    print(f"Part 2 time: {(end - start):.3f} s")
 
 if __name__ == "__main__":
     logging.basicConfig(
