@@ -32,12 +32,6 @@ class Rectangle:
     def area(self):
         return (self.x2 - self.x1 + 1) * (self.y2 - self.y1 + 1)
 
-    @cached_property
-    def points(self):
-        return [Point(x, y)
-                for x in range(self.x1, self.x2 + 1)
-                for y in range(self.y1, self.y2 + 1)]
-
 class Grid():
     def __init__(self, input_file: list[str]):
         self.input_file = input_file
@@ -68,7 +62,6 @@ class Grid():
                         y_range=(min(p1.y, p2.y), max(p1.y, p2.y))
                     )
                 )
-        print("Vertical segments:", [(s.x, s.y_start, s.y_end) for s in segments])
         return segments
 
     @cached_property
@@ -83,7 +76,6 @@ class Grid():
                         y_range=(min(p1.x, p2.x), max(p1.x, p2.x))
                     )
                 )
-        print("Horizontal segments:", [(s.x, s.y_start, s.y_end) for s in segments])
         return segments
 
     def point_on_perimeter(self, x:int, y: int) -> bool:
@@ -108,7 +100,7 @@ class Grid():
 
         return (crossings % 2) == 1
 
-    def rectangle_fully_inside(self, rect: Rectangle) -> bool:
+    def rectangle_in_area(self, rect: Rectangle) -> bool:
 
         # Early reject sui vertici
         if (
@@ -138,6 +130,6 @@ class Grid():
                                reverse=True)
         for (e1, e2) in tqdm(all_combos, desc="Rectangles"):
             rect = Rectangle(e1, e2)
-            if self.rectangle_fully_inside(rect):
+            if self.rectangle_in_area(rect):
                 return rect.area
         return 0
