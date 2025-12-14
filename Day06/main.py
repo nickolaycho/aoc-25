@@ -1,4 +1,4 @@
-from dayXX import *
+from day06 import *
 import time
 
 def main():
@@ -6,17 +6,17 @@ def main():
     input_path = "input.txt"
     input_file = get_input(input_path)
 
-    grid = Grid(input_file=input_file)
+    homework = Homework(input_file=input_file)
 
     start = time.perf_counter()
-    part_1_result = grid.largest_possible_rectangles_area
+    part_1_result = homework.part_1_result
     end = time.perf_counter()
     print("Part 1 result: ", part_1_result)
     print(f"Part 1 time: {(end - start):.3f} s")
 
     print("Part 2")
     start = time.perf_counter()
-    part2_result = grid.largest_area_constrained
+    part2_result = None
     end = time.perf_counter()
     print("Part 2 result: ", part2_result)
     print(f"Part 2 time: {(end - start):.3f} s")
