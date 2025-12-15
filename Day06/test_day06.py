@@ -1,12 +1,15 @@
 from Day06.day06 import *
-from utils import get_input_raw
+from utils import get_input_raw, get_input
+from pathlib import Path
 
 class TestDay6:
     def setup_method(self, method):
-        self.input_path = "test_input.txt"
-        self.input = get_input(input_path=self.input_path)
-        self.test_homework = Homework(
-            input_file=self.input,
+        here = Path(__file__).resolve().parent
+        input_path = here / "test_input.txt"
+
+        self.input_lines: list[str] = get_input(input_path=input_path)
+        self.test_homework: Homework = Homework(
+            input_lines=self.input_lines,
             preprocess_strategy=Part1PreprocessStrategy(),
             column_solver=StandardColumnSolver())
 
@@ -29,13 +32,28 @@ class TestDay6:
         ) == 401
     
     def test_part_1(self):
-        assert self.test_homework.part_1_result == 4277556
+        assert self.test_homework.numbers==[[123, 45, 6], [328, 64, 98], [51, 387, 215], [64, 23, 314]]
+        assert self.test_homework.result == 4277556
 
     def test_part_2(self):
-        input_path = "test_input.txt"
-        input = get_input_raw(input_path=input_path)
-        part_2_result = part_2_preprocess(
-            input_lines=[line for line in input if line]
+        here = Path(__file__).resolve().parent
+        input_path = here / "test_input.txt"
+        input_lines = get_input_raw(input_path=input_path)
+
+        homework_part_2 = Homework(
+            input_lines=input_lines,
+            preprocess_strategy=Part2PreprocessStrategy(),
+            column_solver=StandardColumnSolver()
         )
-        print(part_2_result)
-        assert 2==0
+
+        assert homework_part_2.numbers == [[1, 24, 356], [369, 248, 8], [32, 581, 175], [623, 431, 4]]
+        assert homework_part_2.column_solver.calculate_column_result(
+            numbers=[1, 24, 356], symbol="*")==8544
+        assert homework_part_2.column_solver.calculate_column_result(
+            numbers=[369, 248, 8], symbol="+")==625
+        assert homework_part_2.column_solver.calculate_column_result(
+            numbers=[32, 581, 175], symbol="*")==3253600
+        assert homework_part_2.column_solver.calculate_column_result(
+            numbers=[623, 431, 4], symbol="+")==1058
+
+        assert homework_part_2.result == 3263827
