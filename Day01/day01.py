@@ -1,15 +1,10 @@
 from abc import ABC
 import pandas as pd
 
-
 class Day1(ABC):
     def __init__(self,
-                 input_path: str="input/input.txt"):
-        self.input_path: str = input_path
-
-    def read_input(self) -> list[str]:
-        with open(self.input_path, "r", encoding="utf-8") as f:
-            return [line.strip() for line in f if line.strip()]
+                 input_lines: list[str]):
+        self.input_lines = input_lines
 
     def input_to_array(self) -> list[int]:
         """
@@ -19,8 +14,7 @@ class Day1(ABC):
         Il valore è la parte dopo il primo carattere.
         """
         numeri = []
-        rows = self.read_input()
-        for r in rows:
+        for r in self.input_lines:
             direzione = r[0]
             valore = int(r[1:])
             if direzione == "L":
@@ -47,7 +41,6 @@ class Part1(Day1):
         return passages_at_zero
 
     def solve(self):
-        input: list[str] = self.read_input()
         numeri: list[int] = self.input_to_array()
         passages_at_zero: int = self.passages_at_zero(numeri)
         return passages_at_zero
@@ -138,20 +131,3 @@ class Part2(Day1):
 
     def solve(self):
         return self.total_passes_over_zero()
-
-
-def main():
-
-    part1 = Part1()
-    print(part1.input_to_array())
-
-    part1_result = part1.solve()
-    print("Part 1:", part1_result)
-
-    part2 = Part2()
-    part2_result = part2.solve()
-    print("Part 2:", part2_result)
-
-
-if __name__ == "__main__":
-    main()
