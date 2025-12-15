@@ -1,6 +1,6 @@
 from functools import cached_property
-from Day06.preprocess_strategy import *
-from Day06.column_solver_strategy import *
+from Day06_Strategy_pattern.preprocess_strategy import *
+from Day06_Strategy_pattern.column_solver_strategy import *
 
 class Homework():
     def __init__(self,

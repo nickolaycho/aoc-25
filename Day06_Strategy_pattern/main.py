@@ -1,4 +1,4 @@
-from Day06.day06 import *
+from Day06_Strategy_pattern.day06 import *
 import time
 from utils import get_input, get_input_raw
 from pathlib import Path
