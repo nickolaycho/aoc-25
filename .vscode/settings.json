@@ -1,7 +1,0 @@
-{
-    "python.testing.pytestArgs": [
-        "Day07"
-    ],
-    "python.testing.unittestEnabled": false,
-    "python.testing.pytestEnabled": true
-}
