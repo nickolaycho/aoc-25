@@ -46,9 +46,6 @@ class Part1(Day3):
             )
         return total_output_joltage
 
-
-
-
 class Part2(Day3):
 
     def max_digit_per_string(self,
