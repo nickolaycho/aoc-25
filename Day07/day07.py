@@ -21,46 +21,33 @@ class Manifold():
             i for i,c in enumerate(self.lines[0]) if c==CellType.START
             ][0])
 
-    @cached_property
+    @property
     def num_possible_paths(self) -> int:
-        return len(set(self.compute_all_possible_paths()))
+        return self.count_timelines(0, self.cell_where_beam_starts)
 
-    def compute_all_possible_paths(
-        self,
-        from_cell: tuple[int, int] | None = None,
-        path: list[int] | None = None,
-        all_paths: list[tuple[int, ...]] | None = None,
-    ) -> list[tuple[int, ...]]:
-        if from_cell is None:
-            from_cell = (0, self.cell_where_beam_starts)
-        if path is None:
-            path = [self.cell_where_beam_starts]
-        if all_paths is None:
-            all_paths = []
-
-        i, j = from_cell
-
+    @lru_cache(maxsize=None)
+    def count_timelines(self,
+            i: int,
+            j: int) -> int:
         if i == self.num_rows - 1:
-            all_paths.append(tuple(path))
-            return all_paths
+            return 1
 
-        cell_below_current: str = self.updated_manifold[i+1][j]
-        beam_continuation: list[int] = []
-        if cell_below_current==CellType.BEAM:
-            beam_continuation.append(j)
-        elif cell_below_current==CellType.SPLITTER:
-            beam_continuation.extend([j-1,j+1])
+        cell_below: str = self.updated_manifold[i+1][j]
+
+        if cell_below == CellType.BEAM:
+            return self.count_timelines(i+1, j)
+
+        elif cell_below == CellType.SPLITTER:
+            # timelines(i,j)=timelines(i+1,j−1)+timelines(i+1,j+1)
+            num_paths_from_splitter: int = 0
+            if j > 0: # potrebbe esserci uno splitter sul bordo sx
+                num_paths_from_splitter += self.count_timelines(i+1, j-1)
+            if j < self.num_columns - 1: # potrebbe esserci uno splitter sul bordo dx
+                num_paths_from_splitter += self.count_timelines(i+1, j+1)
+            return num_paths_from_splitter
+
         else:
-            raise ValueError("Cell below beam must contain either beam or splitter")
-
-        for cell_index in beam_continuation:
-            self.compute_all_possible_paths(
-                from_cell=(i + 1, cell_index),
-                path=path + [cell_index],
-                all_paths=all_paths,
-            )
-
-        return all_paths
+            raise ValueError("Invalid cell")
 
     @cached_property
     def num_splits(self) -> int:

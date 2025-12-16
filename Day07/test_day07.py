@@ -51,7 +51,4 @@ class TestDay7:
         assert self.test_manifold.num_splits == 21
 
     def test_part2(self):
-        paths = self.test_manifold.compute_all_possible_paths()
-        for path in paths[:10]:
-            print(path)
         assert self.test_manifold.num_possible_paths==40
